@@ -9,9 +9,7 @@ function Home(){
 
    const navigate =useNavigate();
 
-
     const [cars, setCars] = useState<CarItem[]>([]);
-    const [currentCar, setCurrentCar] = useState<CarItem | null>(null);
 
     useEffect(() =>{
       loadCars();
@@ -29,10 +27,6 @@ function Home(){
 
        navigate("/add-car");
     }
-
-   let goToEditCar=()=>{
-    navigate("/edit-car")
-   }
 
     return (
       <>
