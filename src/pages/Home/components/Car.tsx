@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import type { CarItem } from "../../../modules/CarItem";
+import type { CarItem } from "../../../models/CarItem";
 
 type CarProps={
     car: CarItem;

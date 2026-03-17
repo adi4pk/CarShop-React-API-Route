@@ -13,7 +13,7 @@ function App() {
       <Routes>
         <Route path='/' element={<Home/>}/>
         <Route path='/add-car' element={<AddCar/>}/>
-        <Route path='/edit-car/:id' element={<EditCar/>}/>
+        <Route path='/edit-car/:id' element={<EditCar/>}/>  {/* //props */}
       </Routes>
 
     </BrowserRouter>

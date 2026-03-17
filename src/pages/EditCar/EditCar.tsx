@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { CarItem } from "../../modules/CarItem";
+import type { CarItem } from "../../models/CarItem";
 import { useNavigate, useParams } from "react-router-dom";
 import { getCarById } from "../../services/carService";
 

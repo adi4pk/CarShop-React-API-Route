@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { CarItem } from "../../modules/CarItem";
+import type { CarItem } from "../../models/CarItem";
 import Car from "./components/Car";   // use no {} for components
 
 import { getCars } from "../../services/carService";
