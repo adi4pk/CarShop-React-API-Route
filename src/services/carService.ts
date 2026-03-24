@@ -90,3 +90,7 @@ export async function addCar(car: CreateCarRequest): Promise<CreateCarResponse> 
 export async function editCar(car: EditCarRequest, id:string) : Promise<EditCarResponse> {
   return api<EditCarResponse>(`/cars/${id}`, "PUT", car);
 }
+
+export async function deleteCar(id:string) : Promise<void> {
+  return api<void>(`/cars/${id}`, "DELETE", null);
+}

@@ -3,6 +3,7 @@ import type { CarItem } from "../../models/CarItem";
 import { RouterContextProvider, useNavigate, useParams } from "react-router-dom";
 import { getCarById } from "../../services/carService";
 import { editCar } from "../../services/carService";
+import { deleteCar } from "../../services/carService";
 import type { EditCarRequest } from "../../models/EditCarRequest";
 
 function EditCar(){
@@ -88,7 +89,10 @@ function EditCar(){
     }
 
 
-
+    async function handleDeleteCar(){
+        deleteCar(car?.id+"");      //3 + "" => "3" -- number to string
+        navigate('/');
+    }
 
 
 
@@ -194,6 +198,15 @@ function EditCar(){
             <button type="button" className="button" onClick={handleEditCar} disabled={isSubmitting}> Save Changes
                 {/* {isSubmitting ? "Saving..." : "Add New Car"} */}
             </button>
+            
+        </p>
+
+        <p>
+            <button type="button" className="button">Cancel</button>
+        </p>
+
+        <p>
+            <button type="button" className="button" onClick={handleDeleteCar}>Delete Car</button>
         </p>
     </form>
     </>

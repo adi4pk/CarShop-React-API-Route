@@ -10,7 +10,7 @@ function Car({car}: CarProps){
         <>
             <tr>
 				<td>
-					<Link to={`/edit-car/${car.id}/alex`}>{car.brand}</Link>
+					<Link to={`/edit-car/${car.id}/alex`}>{car.brand}</Link>	{/* "alex" will be grabbed by the useParams() hook	*/}
 				</td>
 				<td>{car.model}</td>
 				<td>{car.color}</td>
