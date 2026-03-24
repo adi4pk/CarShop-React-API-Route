@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { CarItem } from "../../models/CarItem";
-import { RouterContextProvider, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getCarById } from "../../services/carService";
 import { editCar } from "../../services/carService";
 import type { EditCarRequest } from "../../models/EditCarRequest";
@@ -11,9 +11,6 @@ function EditCar(){
 
     const {id,mama}=useParams();
     const [car,setCar]=useState<CarItem>();
-
-
-
 
     const [brandInptValue, setBrandInptValue] = useState("");
     const [modelInptValue, setModelInptValue] = useState("");
@@ -29,7 +26,6 @@ function EditCar(){
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(()=>{
-
         console.log(mama);
          fetchCar();
     },[])
@@ -54,8 +50,8 @@ function EditCar(){
     }
 
     async function handleEditCar(){
+        setIsSubmitting(true);
         
-
         let carObj:EditCarRequest={
             brand: brandInptValue,
             model: modelInptValue,
@@ -69,9 +65,6 @@ function EditCar(){
             available: isAvailable,
         } 
 
-        console.log(carObj)
-
-        
         setBrandInptValue(carObj.brand);
         setModelInptValue(carObj.model);
         setColorInptValue(carObj.color);
@@ -83,16 +76,10 @@ function EditCar(){
         setTransmissionInptValue(carObj.transmission);
         setIsAvailable(carObj.available);
         
-        editCar(carObj,car?.id+"");
+        await editCar(carObj,car?.id+"");
         navigate('/');
+        setIsSubmitting(false);
     }
-
-
-
-
-
-
-
 
     return (
         <>
@@ -129,8 +116,6 @@ function EditCar(){
             onChange={(event) => setYearInptValue(event.target.valueAsNumber)}></input>
         </p>
 
-        
-
         <p>
             <label htmlFor="price">Price</label>
             <input name="price" type="number" id="price" min="0"
@@ -138,9 +123,6 @@ function EditCar(){
             onChange={(event) => setPriceInptValue(event.target.valueAsNumber)}
             ></input>
         </p>
-
-        
-
 
         <p>
             <label htmlFor="mileage">Mileage</label>
@@ -151,8 +133,6 @@ function EditCar(){
 
         </p>
         
-
-
         <p>
             <label htmlFor="size">Size</label>
             <input name="size" type="number" id="size" min="1"
@@ -192,7 +172,6 @@ function EditCar(){
 
         <p>
             <button type="button" className="button" onClick={handleEditCar} disabled={isSubmitting}> Save Changes
-                {/* {isSubmitting ? "Saving..." : "Add New Car"} */}
             </button>
         </p>
     </form>

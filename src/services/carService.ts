@@ -1,92 +1,94 @@
+import type { ApiErrorResponse } from "../models/ApiErrorResponse";
 import type { CarItem } from "../models/CarItem";
 import type { CarsResponseList } from "../models/CarsResponseList";
-import type { CreateCarResponse } from "../models/CreateCarResponse";
 import type { CreateCarRequest } from "../models/CreateCarRequest";
-import type { ApiErrorResponse } from "../models/ApiErrorResponse";
+import type { CreateCarResponse } from "../models/CreateCarResponse";
 import type { EditCarRequest } from "../models/EditCarRequest";
-import type {EditCarResponse} from "../models/EditCarResponse";
+import type { EditCarResponse } from "../models/EditCarResponse";
 
-type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
+const API_BASE_URL = "http://127.0.0.1:8080/api";
 
-export class ApiRequestError extends Error {
+export type ApiRequestError = {
   status: number;
   code: string;
+  message: string;
   hint: string;
-  details: ApiErrorResponse["details"];
+  details: ApiErrorResponse["details"] ;
+};
 
-  constructor(error: Partial<ApiErrorResponse> & { message: string; status: number }) {
-    super(error.message);     //Error constructor does NOT accept a name parameter - the signature is new Error(message?: string)
-    this.name = "ApiRequestError";      //MUST override the .name inside Error's constructor -- because javaScript does not override it based on your class name.
-    this.status = error.status;
-    this.code = error.code ?? "REQUEST_FAILED";
-    this.hint = error.hint ?? "";
-    this.details = error.details ?? null;
-  }
+export function isApiRequestError(error: unknown): error is ApiRequestError {
+  return typeof error === "object" && error !== null && "status" in error && "message" in error;
 }
 
-async function api<T>(
-  path = "",
-  method: HttpMethod = "GET",
-  body: CarItem | CreateCarRequest | null,
-): Promise<T> {
-  const base = "http://127.0.0.1:8080/api";
-  const url = `${base}${path}`;
-
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json; charset=utf-8",
-    "X-Requested-With": "XMLHttpRequest",
-  };
-
-  const options: RequestInit = {
-    method,
-    headers,
-  };
-
-
-  if (body !== null) {
-    options.body = JSON.stringify(body);
-  }
-
-
-  const response = await fetch(url, options);
-
-  const contentType = response.headers.get("content-type");
-
-  let data: T | ApiErrorResponse | null = null;
+async function throwRequestError(response: Response) {
+  let errorData: ApiErrorResponse | null = null;
   let textResponse = "";
 
-  if (contentType && contentType.includes("application/json")) {
-    data = await response.json();
-  } else {
+  try {
+    errorData = (await response.json()) as ApiErrorResponse;
+  } catch {
     textResponse = await response.text();
   }
 
-  if (!response.ok) {
-    const errorData = data as ApiErrorResponse;
-    throw new ApiRequestError({
-      status: response.status,
-      code: errorData?.code,
-      message: errorData?.message || textResponse || `Request failed with status ${response.status}`,
-      hint: errorData?.hint,
-      details: errorData?.details,
-    });
-  }
-
-  
-  return data as T;
+  throw {
+    status: response.status,
+    code: errorData?.code ?? "REQUEST_FAILED",
+    message: errorData?.message || textResponse || `Request failed with status ${response.status}`,
+    hint: errorData?.hint ?? "",
+    details: errorData?.details ?? null,
+  } satisfies ApiRequestError;
 }
 
 export async function getCars(): Promise<CarsResponseList> {
-  return api<CarsResponseList>("/cars", "GET", null);
+  const response = await fetch(`${API_BASE_URL}/cars`);
+
+  if (!response.ok) {
+    await throwRequestError(response);
+  }
+
+  return await response.json();
 }
+
 export async function getCarById(id: string): Promise<CarItem> {
-  return api<CarItem>("/cars/" + id, "GET", null);
+  const response = await fetch(`${API_BASE_URL}/cars/${id}`);
+
+  if (!response.ok) {
+    await throwRequestError(response);
+  }
+
+  return await response.json();
 }
 
 export async function addCar(car: CreateCarRequest): Promise<CreateCarResponse> {
-  return api<CreateCarResponse>("/cars", "POST", car);
+  const response = await fetch(`${API_BASE_URL}/cars`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "X-Requested-With": "XMLHttpRequest",
+    },
+    body: JSON.stringify(car),
+  });
+
+  if (!response.ok) {
+    await throwRequestError(response);
+  }
+
+  return await response.json();
 }
 
-export async function editCar(car: EditCarRequest, id:string) : Promise<EditCarResponse> {
-  return api<EditCarResponse>(`/cars/${id}`, "PUT", car);
+export async function editCar(car: EditCarRequest, id: string): Promise<EditCarResponse> {
+  const response = await fetch(`${API_BASE_URL}/cars/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "X-Requested-With": "XMLHttpRequest",
+    },
+    body: JSON.stringify(car),
+  });
+
+  if (!response.ok) {
+    await throwRequestError(response);
+  }
+
+  return await response.json();
 }

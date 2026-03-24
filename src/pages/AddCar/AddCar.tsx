@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { addCar, ApiRequestError } from "../../services/carService";
+import { addCar, isApiRequestError } from "../../services/carService";
 import type { CreateCarRequest } from "../../models/CreateCarRequest";
 
  type FieldErrors = {
@@ -19,7 +19,7 @@ import type { CreateCarRequest } from "../../models/CreateCarRequest";
 function AddCar(){
     const navigate=useNavigate();
 
-    const [brandInptValue, setBrandInptValue] = useState(""); //???
+    const [brandInptValue, setBrandInptValue] = useState("");
     const [modelInptValue, setModelInptValue] = useState("");
     const [colorInptValue, setColorInptValue] = useState("");
     const [sizeInptValue, setSizeInptValue] = useState(0);
@@ -58,13 +58,11 @@ function AddCar(){
         available: isAvailable,
     }
 
-    // console.log(carObj);
-
         try{
             await addCar(carObj);
             navigate("/");
         }catch(error) {
-            if (error instanceof ApiRequestError) {
+            if (isApiRequestError(error)) {
                 setErrorMessage(error.message || "A aparut o eroare la salvarea masinii.");
                 setErrorHint(error.hint);
 
