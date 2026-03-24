@@ -10,7 +10,7 @@ function Car({car}: CarProps){
         <>
             <tr>
 				<td>
-					<Link to={`/edit-car/${car.id}`}>{car.brand}</Link>
+					<Link to={`/edit-car/${car.id}/alex`}>{car.brand}</Link>
 				</td>
 				<td>{car.model}</td>
 				<td>{car.color}</td>
@@ -18,8 +18,9 @@ function Car({car}: CarProps){
 				<td>{car.year}</td>
 				<td>{car.price}</td>
 				<td>{car.mileage}</td>
+				<th>{car.fuelType}</th>
 				<td>{car.transmission}</td>
-				<td>{car.available}</td>
+				<td>{car.available ? "yes" : "No"}</td>
 			</tr>
         </>
     )

@@ -44,7 +44,9 @@ function Home(){
               <th>Color</th>
               <th>Size</th>
               <th>Year</th>
+              <th>Price</th>
               <th>Mileage</th>
+              <th>Fuel Type</th>
               <th>Transmission</th>
               <th>Available</th>
             </tr>

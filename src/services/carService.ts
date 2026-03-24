@@ -3,6 +3,8 @@ import type { CarsResponseList } from "../models/CarsResponseList";
 import type { CreateCarResponse } from "../models/CreateCarResponse";
 import type { CreateCarRequest } from "../models/CreateCarRequest";
 import type { ApiErrorResponse } from "../models/ApiErrorResponse";
+import type { EditCarRequest } from "../models/EditCarRequest";
+import type {EditCarResponse} from "../models/EditCarResponse";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 
@@ -13,8 +15,8 @@ export class ApiRequestError extends Error {
   details: ApiErrorResponse["details"];
 
   constructor(error: Partial<ApiErrorResponse> & { message: string; status: number }) {
-    super(error.message);
-    this.name = "ApiRequestError";
+    super(error.message);     //Error constructor does NOT accept a name parameter - the signature is new Error(message?: string)
+    this.name = "ApiRequestError";      //MUST override the .name inside Error's constructor -- because javaScript does not override it based on your class name.
     this.status = error.status;
     this.code = error.code ?? "REQUEST_FAILED";
     this.hint = error.hint ?? "";
@@ -83,4 +85,8 @@ export async function getCarById(id: string): Promise<CarItem> {
 
 export async function addCar(car: CreateCarRequest): Promise<CreateCarResponse> {
   return api<CreateCarResponse>("/cars", "POST", car);
+}
+
+export async function editCar(car: EditCarRequest, id:string) : Promise<EditCarResponse> {
+  return api<EditCarResponse>(`/cars/${id}`, "PUT", car);
 }

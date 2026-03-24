@@ -3,7 +3,18 @@ import { useNavigate } from "react-router-dom";
 import { addCar, ApiRequestError } from "../../services/carService";
 import type { CreateCarRequest } from "../../models/CreateCarRequest";
 
-type FieldErrors = Partial<Record<keyof CreateCarRequest, string>>;
+ type FieldErrors = {
+    brand?: string | undefined;
+    model?: string | undefined;
+    color?: string | undefined;
+    size?: string | undefined;
+    year?: string | undefined;
+    price?: string | undefined;
+    mileage?: string | undefined;
+    fuelType?: string | undefined;
+    transmission?: string | undefined;
+    available?: string | undefined;
+}
 
 function AddCar(){
     const navigate=useNavigate();
